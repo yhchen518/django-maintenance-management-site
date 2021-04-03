@@ -1,0 +1,46 @@
+{% extends "base_generic.html" %}
+{% block content %}
+  <h1>Parts Management System</h1>
+  <div class="container border border-success px-auto py-2 my-2">
+  	<span class="text-center"><h4>Parts Search</h4></span>
+  	<form class="form-horizontal" action="{% url 'partserver:parts' %}" method="get">
+  		<div class="form-group">
+  			<label>Line:</label>
+			<select class="form-control" name="line">
+				<option value=""></option>
+			{% for line in line_list %}
+  				<option value={{ line.id }}>{{ line.name }}</option>
+  			{% endfor %}
+			</select>
+		</div>
+		<div class="form-group">
+			<label>Section:</label>
+			<select class="form-control" name="section">
+				<option value=""></option>
+			{% for section in section_list %}
+	  			<option value={{ section.id }}>{{ section.name }}</option>
+	  		{% endfor %}
+			</select>
+		</div>
+		<div class="form-group">
+			<label>Keyword (<i>e.g. part's name or material number</i>):</label>
+    		<input class="form-control" name="detail" type="text" placeholder="Search parts by key word or parts number">
+    	</div>
+    	<div class="form-group">
+    		<input class="btn btn-success form-control" type="submit" value="Search">
+    	</div>
+  	</form>
+  </div>
+  <div class="container border border-success px-auto py-2">
+  	<span class="text-center"><h4>Line Pictures</h4></span>
+  	<div class="container">
+	  <div class="row">
+	  	{% for line in line_list %}
+	  		{% if line.name != "General" %}
+	    		<div class="col"><a class="btn btn-info btn-lg btn-block m-1" href="{{ line.get_absolute_url }}">{{line.name}}</a></div>
+	    	{% endif %}
+	    {% endfor %}
+	  </div>
+	</div>
+  </div>
+{% endblock %}

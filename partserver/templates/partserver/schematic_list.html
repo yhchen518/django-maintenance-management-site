@@ -1,0 +1,83 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+{% load pdffilter %}
+  <h1>Schematic</h1>
+  <div class="text-muted">
+    Clicked the specific line!
+  </div>
+  {% if line_list %}
+  <div>
+    {% for line in line_list %}
+      {% if line.name != "General" %}
+        <details>
+          <summary><h4 class="list-group-item list-group-item-action">{{line}}</h4></summary>
+          {% for section in line.section.all %}
+          <details>
+            <summary><div class="btn btn-primary btn-block btn-md my-1">{{section}}</div></summary>
+            {% for schematic in schematic_list|linefilter:line|sectionfilter:section %}
+              <button type="button" class="btn btn-success btn-block btn-sm my-1" data-toggle="modal" data-target="#schematicModal" onclick="schematicPopup('{{ schematic.name }}', '{{ schematic.pdfFile.url }}', '{{ schematic.pk }}')">
+                {{ schematic.name }}
+              </button>
+            {% endfor %}
+          </details>
+          {% endfor %}
+        </details>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div>
+  </div>
+  {% else %}
+    <p>There are no line in the library.</p>
+  {% endif %}
+  <div class="modal fade" id="schematicModal" tabindex="-1" role="dialog" aria-labelledby="schematicModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="schematicModalLabel"></h5>
+          <a id="downloadQR" class="btn btn-success ml-1">Download QR code</a>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <img class="img-fluid mx-auto w-50" id="pdfQR"></img>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          {% if user.is_authenticated %}
+            <a id="schematicDelete" class="btn btn-warning" href="{% url 'partserver:schematic_delete' 99999 %}">Delete</a>
+            <a id="schematicUpdate" class="btn btn-warning" href="{% url 'partserver:schematic_update' 99999 %}">Update</a>
+          {% endif %}
+          <a id="modalPDFOpen" class="btn btn-success" href="" target="_new">Open PDF</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    function schematicPopup(modalLabel, pdfUrl, schematicPK) {
+      var schematicUpdateButton = document.getElementById("schematicUpdate");
+      var schematicDeleteButton = document.getElementById("schematicDelete");
+      if(schematicUpdateButton) {
+        var updateUrl = String(schematicUpdateButton.href).replace("99999", schematicPK);
+        schematicUpdateButton.href = updateUrl;
+      }
+      if(schematicDeleteButton) {
+        var deleteUrl = String(schematicDeleteButton.href).replace("99999", schematicPK);
+        schematicDeleteButton.href = deleteUrl;
+      }
+      document.getElementById("schematicModalLabel").innerHTML = modalLabel;
+      document.getElementById("modalPDFOpen").href = pdfUrl;
+      var domainUrl = String(location.href).split("/")[2];
+      var qr = new QRious({
+        element: document.getElementById('pdfQR'),
+        value: "http://" + domainUrl + pdfUrl,
+          mime: 'image/jpg',
+          size: 1920
+      });
+      document.getElementById('downloadQR').download = modalLabel + ".png";
+      document.getElementById('downloadQR').href = qr.toDataURL();
+    }
+  </script> 
+{% endblock %}

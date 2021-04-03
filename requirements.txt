@@ -1,0 +1,4 @@
+1. virtualenvwrapper
+2. python -m pip install Django
+3. django-extra-views
+4. Pillow

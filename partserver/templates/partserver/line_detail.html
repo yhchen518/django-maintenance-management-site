@@ -1,0 +1,229 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<style type="text/css">
+  #descBox {
+    position: absolute;
+    background-color: #ced4da;
+    color: black;
+    display:none;
+    text-align: center;
+    padding: 2px;
+    border: 2px black;
+    opacity: 0.8;
+  }
+  .popup-overlay {
+    /*Hides pop-up when there is no "active" class*/
+    visibility: hidden;
+    position: absolute;
+    background: #ffffff;
+    border: 3px solid #666666;
+    width: auto;
+    height: auto;
+    max-width: 25%;
+  }
+
+  .popup-overlay.active {
+    /*displays pop-up when "active" class is present*/
+    visibility: visible;
+    text-align: center;
+  }
+
+  .popup-content {
+    /*Hides pop-up content when there is no "active" class */
+    visibility: hidden;
+  }
+
+  .popup-content #popupTitle > a {
+    /*Hides pop-up content when there is no "active" class */
+    text-decoration: none;
+  }
+
+  .popup-content.active {
+    /*Shows pop-up content when "active" class is present */
+    visibility: visible;
+  }
+
+  button {
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 30px;
+    margin: .20rem;
+    font-size: 1rem;
+    color: #666666;
+    background: #ffffff;
+    border: 1px solid #666666;
+  }
+
+  button:hover {
+    border: 1px solid #666666;
+    background: #666666;
+    color: #ffffff;
+  }
+
+  .partsIndiImg {
+    display: inline-block;
+    position: relative;
+  }
+  .partsIndiImg > img {
+    width: 100%;
+    height: auto;
+   }
+
+  .partsIndiImg .dot {
+    background-color: #ffffff;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    display:block;
+    height:2.5vh;
+    width:2.5vh;
+    position:absolute;
+    line-height: 25px;
+    color:#fff;
+    opacity: 0.8;
+    text-align:center;
+    font-size:0px;
+    background-position: 0 -27px;
+    border: solid 3px #e9e9e9;
+   }
+
+  .partsIndiImg a:hover {
+    font-size: 0;
+    cursor: pointer;
+    background-position: 0 0;
+    height:3vh;
+    width:3vh;
+    opacity: 1;
+  }
+</style>
+{% load static %}
+  <div class="container-fluid">
+    <h1>
+    {% load searchfilter %}
+      {{ line.name }}
+    </h1>
+    <div class="container text-center">
+      {% if line.name == "Pre-Stretch" %}
+      <h5>Front Look</h5>
+      <div id="frontfull" class="partsIndiImg">
+        <img src="{% static 'img/Line_Img/PreStretch/front_full.jpeg' %}" alt="Pre Stretch Front Picture"></img>
+      </div>
+      <h5>Back Cover Opened</h5>
+      <div id="backopened" class="partsIndiImg">
+        <img src="{% static 'img/Line_Img/PreStretch/front_open.jpeg' %}" alt="Pre Stretch Front Opened Picture"></img>
+      </div>
+      <h5>Back side Look</h5>
+      <div id="backside" class="partsIndiImg">
+        <img src="{% static 'img/Line_Img/PreStretch/back_spindle.jpeg' %}" alt="Pre Stretch Back Opened Picture"></img>
+      </div>
+      <h5>Motors</h5>
+      <div id="motors" class="partsIndiImg">
+        <img src="{% static 'img/Line_Img/PreStretch/motor.jpg' %}" alt="Pre Stretch Motors Picture"></img>
+      </div>
+      <h5>Cabinet Componet 1</h5>
+      <div id="prestretchplcs" class="partsIndiImg">
+        <img src="{% static 'img/Line_Img/PreStretch/plcs.jpeg' %}" alt="Pre Stretch Cabinet Componet 1"></img>
+      </div>
+      <h5>Cabinet Componet 2</h5>
+      <div id="prestretchdrives" class="partsIndiImg">
+        <img src="{% static 'img/Line_Img/PreStretch/drives.jpeg' %}" alt="Pre Stretch Cabinet Componet 2"></img>
+      </div>
+      {% endif %}
+    </div>
+    <div id="descBox"></div>
+    <div class="popup-overlay">
+      <div class="popup-content">
+        <h5 id="popupTitle"></h5>
+        <img class="img-fluid mx-auto w-50" id="popupQR"></img><br>
+        <button class="popupClose">Close</button> 
+      </div>
+    </div>
+
+<script type="text/javascript" src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
+<script type="text/javascript">
+  function plotDots(dotDict) {
+    for (let idKey in dotDict) {
+        dotDict[idKey].forEach(function(item) {
+          $(idKey).append(`<a id='${item[0]}' class='dot' href='' style='left:${item[1]}%;top:${item[2]}%';>${item[3]}</a>`);
+        });
+      }
+  }
+  $(document).ready(function(){
+    lineName = "{{line.name}}";
+    if (lineName == "Pre-Stretch") {
+      var dotDict = {
+                      "#frontfull": [
+                                      ['1915', 83.3, 54.9, '{{1915|idtoname:part_list}}'],
+                                      ['1916', 84.53, 54.9, '{{1916|idtoname:part_list}}'],
+                                      ['1917', 86.14, 54.9, '{{1917|idtoname:part_list}}'],
+                                      ['1955', 87.36, 78.02, '{{1955|idtoname:part_list}}'],
+                                      ['1705', 82.95, 48.76, '{{1705|idtoname:part_list}}'],
+                                    ],
+                      "#frontopened": [
+                                        ['1717', 33.3, 69.17, '{{1717|idtoname:part_list}}'],
+                                        ['1717', 63.3, 69.17, '{{1717|idtoname:part_list}}']
+                                      ],
+                      "#backinside": [
+                                        ['1717', 10.18, 72.61, '{{1717|idtoname:part_list}}'],
+                                        ['1717', 71.54, 73.29, '{{1717|idtoname:part_list}}']
+                                      ],
+                      "#motors": [
+                                    ['1933', 52.98, 26.84, '{{1933|idtoname:part_list}}'], // Cylinder Position Sensor (Twin)
+                                    ['1925', 74.6, 39.8, '{{1925|idtoname:part_list}}'], // Cylinder Position Sensor (Single)
+                                    ['1669', 43.04, 70.65, '{{1669|idtoname:part_list}}'], // Oscillator Motor
+                                    ['1941', 77.4, 54.3, '{{1941|idtoname:part_list}}'], // Strethcer Motor
+                                    ['1942', 53.28, 50.1, '{{1942|idtoname:part_list}}'], // Shaft Motor
+                                    ['1942', 65.86, 25.6, '{{1942|idtoname:part_list}}'], // Layon Motor
+                                  ],
+                      "#prestretchplcs":  [
+                                            ['part1934', 5.25, 19.93, '{{1934|idtoname:part_list}}'],
+                                            ['part1698', 20.83, 50.17, '{{1698|idtoname:part_list}}'],
+                                            ['part1704', 47.81, 48.68, '{{1704|idtoname:part_list}}'],
+                                            ['part1702', 56.63, 48.41, '{{1702|idtoname:part_list}}'],
+                                            ['part1699', 13.28, 48.28, '{{1699|idtoname:part_list}}']
+                                          ],
+                      "#prestretchdrives": [
+                                              ['part1715', 43.55, 29, '{{1715|idtoname:part_list}}'],
+                                              ['part1715', 70, 29, '{{1715|idtoname:part_list}}'],
+                                              ['part1716', 13.12, 19.68, '{{1716|idtoname:part_list}}'],
+                                              ['part1708', 91.52, 76.47, '{{1708|idtoname:part_list}}']
+                                            ]
+                    }
+      plotDots(dotDict);
+    }
+
+    $(".partsIndiImg .dot").hover(
+      function(e){
+        partName = $(this).html();
+        $("#descBox").css({"display": "block", "left": `${e.pageX*1.01}px`, "top": `${e.pageY*1.01}px`});
+        $("#descBox").html(`<h5>${partName}</h5>`);
+        $(this).fadeOut(300).fadeIn(300);
+      }, 
+      function(){
+        $("#descBox").css({"display": "none"});
+      }
+    );
+
+    $(".partsIndiImg .dot").on("click", function(e){
+      partName = $(this).html();
+      partId = e.target.id.replace("part","");
+      partUrl = "http://172.17.8.253:8000/partserver/parts/" + partId;
+      var qr = new QRious({
+        element: document.getElementById('popupQR'),
+        value: partUrl,
+          mime: 'image/png',
+          size: 360
+      });
+      $(".popup-overlay, .popup-content").addClass("active");
+      $(".popup-overlay .popup-content #popupTitle").html(`<a href='${partUrl}' target='_blank'>${partName}</a>`);
+      $(".popup-overlay").css({"left": `${e.pageX}px`, "top": `${e.pageY}px`});
+
+      return false;
+    });
+
+    $("popupClose, .popup-overlay, .partsIndiImg").on("click", function() {
+      $(".popup-overlay, .popup-content").removeClass("active");
+    });
+  });
+</script>
+{% endblock %}
